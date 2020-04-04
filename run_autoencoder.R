@@ -4,6 +4,7 @@
 source("autoEncoder.R")
 source("SparseMatrixFit.R")
 source("evaluation.R")
+library(keras)
 
 #create and train auto encoder model
 
@@ -93,9 +94,9 @@ brand_encoder_8<-keras::load_model_hdf5("model/brand_encoder_8.h5")
 brand_AE_8<-keras::load_model_hdf5("model/brand_AE_8.h5")
 #get encodered result
 brand_train_data_8<-sparseMatrixPredict(dtm_train_brand_tfidf,brand_encoder_8,128,1481661)
-save(brand_train_data_8,file="data/train_brand_encoded_8.RData")
+save(brand_train_data_8,file="processed_data/train_brand_encoded_8.RData")
 brand_test_data_8<-sparseMatrixPredict(dtm_test_brand_tfidf,brand_encoder_8,128,693359)
-save(brand_test_data_8,file="data/test_brand_encoded_8.RData")
+save(brand_test_data_8,file="processed_data/test_brand_encoded_8.RData")
 #compute mse
 brand_8_test_mse<-sparseMatrixMetric(dtm_test_brand_tfidf,brand_AE_8,dtm_test_brand_tfidf,128,693359,se)
 brand_8_train_mse<-sparseMatrixMetric(dtm_train_brand_tfidf,brand_AE_8,dtm_train_brand_tfidf,128,1481661,se)
@@ -106,11 +107,23 @@ name_encoder_8<-keras::load_model_hdf5("model/name_encoder_8.h5")
 name_AE_8<-keras::load_model_hdf5("model/name_AE_8.h5")
 #get encodered result
 name_train_data_8<-sparseMatrixPredict(dtm_train_name_tfidf,name_encoder_8,128,1481661)
-save(name_train_data_8,file="data/train_name_encoded_8.RData")
+save(name_train_data_8,file="processed_data/train_name_encoded_8.RData")
 name_test_data_8<-sparseMatrixPredict(dtm_test_name_tfidf,name_encoder_8,128,693359)
-save(name_test_data_8,file="data/test_name_encoded_8.RData")
+save(name_test_data_8,file="processed_data/test_name_encoded_8.RData")
 #compute mse
 name_8_test_mse<-sparseMatrixMetric(dtm_test_name_tfidf,name_AE_8,dtm_test_name_tfidf,128,693359,se)
 name_8_train_mse<-sparseMatrixMetric(dtm_train_name_tfidf,name_AE_8,dtm_train_name_tfidf,128,1481661,se)
+
+#cate 8########
+cate_encoder_8<-keras::load_model_hdf5("model/cate_encoder_8.h5")
+cate_AE_8<-keras::load_model_hdf5("model/cate_AE_8.h5")
+#get encodered result
+cate_train_data_8<-sparseMatrixPredict(dtm_train_cate_tfidf,cate_encoder_8,128,1481661)
+save(cate_train_data_8,file="processed_data/train_cate_encoded_8.RData")
+cate_test_data_8<-sparseMatrixPredict(dtm_test_cate_tfidf,cate_encoder_8,128,693359)
+save(cate_test_data_8,file="processed_data/test_cate_encoded_8.RData")
+#compute mse
+cate_8_test_mse<-sparseMatrixMetric(dtm_test_cate_tfidf,cate_AE_8,dtm_test_cate_tfidf,128,693359,se)
+cate_8_train_mse<-sparseMatrixMetric(dtm_train_cate_tfidf,cate_AE_8,dtm_train_cate_tfidf,128,1481661,se)
 
 
