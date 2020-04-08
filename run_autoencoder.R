@@ -3,7 +3,7 @@
 #In order to run this script, you need first load corresponding Rdata from processed_data file.
 source("autoEncoder.R")
 source("SparseMatrixFit.R")
-source("evaluation.R")
+source("utils.R")
 library(keras)
 
 #create and train auto encoder model
