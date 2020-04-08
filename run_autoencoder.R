@@ -66,7 +66,7 @@ AE_model%>%save_model_hdf5("model/brand_AE_32.h5")
 
 #category  8#######
 #auto encoder for sub category 2 vector with 8 dimension for output of encoder part
-model<-autoEncoder(1000,c(512,128,32,8),c(8,32,128,512))
+model<-autoEncoder(960,c(512,128,32,8),c(8,32,128,512))
 encoder_model<-model[[1]]
 AE_model<-model[[2]]
 
@@ -101,6 +101,19 @@ save(brand_test_data_8,file="processed_data/test_brand_encoded_8.RData")
 brand_8_test_mse<-sparseMatrixMetric(dtm_test_brand_tfidf,brand_AE_8,dtm_test_brand_tfidf,128,693359,se)
 brand_8_train_mse<-sparseMatrixMetric(dtm_train_brand_tfidf,brand_AE_8,dtm_train_brand_tfidf,128,1481661,se)
 
+#brand 32########
+brand_encoder_32<-keras::load_model_hdf5("model/brand_encoder_32.h5")
+brand_AE_32<-keras::load_model_hdf5("model/brand_AE_32.h5")
+#get encodered result
+brand_train_data_32<-sparseMatrixPredict(dtm_train_brand_tfidf,brand_encoder_32,128,1481661)
+save(brand_train_data_32,file="processed_data/train_brand_encoded_32.RData")
+brand_test_data_32<-sparseMatrixPredict(dtm_test_brand_tfidf,brand_encoder_32,128,693359)
+save(brand_test_data_32,file="processed_data/test_brand_encoded_32.RData")
+#compute mse
+brand_32_test_mse<-sparseMatrixMetric(dtm_test_brand_tfidf,brand_AE_32,dtm_test_brand_tfidf,128,693359,se)
+brand_32_train_mse<-sparseMatrixMetric(dtm_train_brand_tfidf,brand_AE_32,dtm_train_brand_tfidf,128,1481661,se)
+
+
 
 #name 8########
 name_encoder_8<-keras::load_model_hdf5("model/name_encoder_8.h5")
@@ -126,4 +139,39 @@ save(cate_test_data_8,file="processed_data/test_cate_encoded_8.RData")
 cate_8_test_mse<-sparseMatrixMetric(dtm_test_cate_tfidf,cate_AE_8,dtm_test_cate_tfidf,128,693359,se)
 cate_8_train_mse<-sparseMatrixMetric(dtm_train_cate_tfidf,cate_AE_8,dtm_train_cate_tfidf,128,1481661,se)
 
+#cate 32########
+cate_encoder_32<-keras::load_model_hdf5("model/cate_encoder_32.h5")
+cate_AE_32<-keras::load_model_hdf5("model/cate_AE_32.h5")
+#get encodered result
+cate_train_data_32<-sparseMatrixPredict(dtm_train_cate_tfidf,cate_encoder_32,128,1481661)
+save(cate_train_data_32,file="processed_data/train_cate_encoded_32.RData")
+cate_test_data_32<-sparseMatrixPredict(dtm_test_cate_tfidf,cate_encoder_32,128,693359)
+save(cate_test_data_32,file="processed_data/test_cate_encoded_32.RData")
+#compute mse
+cate_32_test_mse<-sparseMatrixMetric(dtm_test_cate_tfidf,cate_AE_32,dtm_test_cate_tfidf,128,693359,se)
+cate_32_train_mse<-sparseMatrixMetric(dtm_train_cate_tfidf,cate_AE_32,dtm_train_cate_tfidf,128,1481661,se)
+
+#desc 32########
+desc_encoder_32<-keras::load_model_hdf5("model/description_encoder_32.h5")
+desc_AE_32<-keras::load_model_hdf5("model/description_AE_32.h5")
+#get encodered result
+desc_train_data_32<-sparseMatrixPredict(dtm_train_desc_tfidf,desc_encoder_32,128,1481661)
+save(desc_train_data_32,file="processed_data/train_desc_encoded_32.RData")
+desc_test_data_32<-sparseMatrixPredict(dtm_test_desc_tfidf,desc_encoder_32,128,693359)
+save(desc_test_data_32,file="processed_data/test_desc_encoded_32.RData")
+#compute mse
+desc_32_test_mse<-sparseMatrixMetric(dtm_test_desc_tfidf,desc_AE_32,dtm_test_desc_tfidf,128,693359,se)
+desc_32_train_mse<-sparseMatrixMetric(dtm_train_desc_tfidf,desc_AE_32,dtm_train_desc_tfidf,128,1481661,se)
+
+#desc 128####
+desc_encoder_128<-keras::load_model_hdf5("model/description_encoder_128.h5")
+desc_AE_128<-keras::load_model_hdf5("model/description_AE_128.h5")
+#get encodered result
+desc_train_data_128<-sparseMatrixPredict(dtm_train_desc_tfidf,desc_encoder_128,128,1481661)
+save(desc_train_data_128,file="processed_data/train_desc_encoded_128.RData")
+desc_test_data_128<-sparseMatrixPredict(dtm_test_desc_tfidf,desc_encoder_128,128,693359)
+save(desc_test_data_128,file="processed_data/test_desc_encoded_128.RData")
+#compute mse
+desc_128_test_mse<-sparseMatrixMetric(dtm_test_desc_tfidf,desc_AE_128,dtm_test_desc_tfidf,128,693359,se)
+desc_128_train_mse<-sparseMatrixMetric(dtm_train_desc_tfidf,desc_AE_128,dtm_train_desc_tfidf,128,1481661,se)
 
