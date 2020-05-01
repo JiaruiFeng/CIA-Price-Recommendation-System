@@ -1,5 +1,7 @@
-source("xgboost.R")
+#this script used to train xgboost in all splited train data
+#and then check the test error for all price range group
 source("utils.R")
+library(xgboost)
 library(plotly)
 library(dplyr)
 traindata415<- list(data=final_train_data,label=train_price)
