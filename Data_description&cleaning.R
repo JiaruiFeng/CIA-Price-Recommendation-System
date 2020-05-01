@@ -25,31 +25,27 @@ library(stringr)
 
 #Name
 print(sum(is.na(train_data$name)))
-print(sum(is.na(test_data$name)))
 print(sum(as.character(train_data$name)==""))
-print(sum(as.character(test_data$name)==""))
 #We can see there don't have missing value in `name`, which is reasonable, 
 #since website would not allow a item without name to be sold. So we don't need to clean it.
 
 #item_condition_id
 print(sum(is.null(train_data$item_condition_id)))
-print(sum(is.null(test_data$item_condition_id)))
+
 
 #There doesn't have missing value in `item_condition_id` either.
 
 #category_name
 print(sum(as.character(train_data$category_name)==""))
-print(sum(as.character(test_data$category_name)==""))
 
-#We can see there are 6327 and 3058 missing value respectively in train and test data.
+
+#We can see there are 6327 missing value in train data.
 #We fill it with "missing"
 
 train_missing_index<-which(as.character(train_data$category_name)=="")
-test_missing_index<-which(as.character(test_data$category_name)=="")
 train_data$category_name<-as.character(train_data$category_name)
-test_data$category_name<-as.character(test_data$category_name)
 train_data$category_name[train_missing_index]<-"missing"
-test_data$category_name[test_missing_index]<-"missing"
+
 
 #Also notice that there are three level in the category, 
 #we define it as `main_category`, `sub_category1` and `sub_category2`, 
@@ -81,26 +77,16 @@ colnames(train_split_categ)<-c("main_category","sub_category1","sub_category2")
 train_data<-cbind(train_data,train_split_categ)
 train_data<-train_data[,-4]
 
-#test_data
-test_split_categ<-sapply(test_data$category_name,split_fun)
-test_split_categ<-t(test_split_categ)
-test_split_categ<-data.frame(test_split_categ,row.names = NULL)
-colnames(test_split_categ)<-c("main_category","sub_category1","sub_category2")
-test_data<-cbind(test_data,test_split_categ)
-test_data<-test_data[,-4]
+
 
 #brand_name
 print(sum(as.character(train_data$brand_name)==""))
-print(sum(as.character(test_data$brand_name)==""))
 
 #There are about half of brand name is missing, We will first fill it as missing.
 
 train_data$brand_name<-as.character(train_data$brand_name)
-test_data$brand_name<-as.character(test_data$brand_name)
 train_brand_missing<-which(train_data$brand_name=="")
-test_brand_missing<-which(test_data$brand_name=="")
 train_data$brand_name[train_brand_missing]="missing"
-test_data$brand_name[test_brand_missing]="missing"
 
 #price
 print(sum(is.null(train_data$price)))
@@ -117,24 +103,19 @@ train_data<-train_data[train_data$price>=3,]
 #shipping
 
 print(sum(is.null(train_data$shipping)))
-print(sum(is.null(test_data$shipping)))
 unique(train_data$shipping)
-unique(test_data$shipping)
 
 #There is no missing value in `shipping` variable.
 
 #item_description
 
 print(sum(is.null(train_data$item_description)))
-print(sum(is.null(test_data$item_description)))
 print(sum(as.character(train_data$item_description)==""))
-print(sum(as.character(test_data$item_description)==""))
 
 #There are only 4 data in train data set and 0 in test data set that have missing value, 
 #simpily replace as missing
 
 train_data$item_description=as.character(train_data$item_description)
-test_data$item_description=as.character(test_data$item_description)
 train_data$item_description[train_data$item_description==""]="missing"
 
 #Meanwhile, there are lot's of punctuation and special symbol that may affect our analysis, 
@@ -153,11 +134,8 @@ remove_punctuation<-function(x){
   processed_string
 }
 train_descrption<-sapply(train_data$item_description,remove_punctuation)
-test_description<-sapply(test_data$item_description,remove_punctuation)
 train_descrption<-as.character(train_descrption)
-test_description<-as.character(test_description)
 train_data$item_description<-train_descrption
-test_data$item_description<-test_description
 
 #Also, we can add a new varibale indicate the length of description
 
@@ -169,15 +147,11 @@ count_length<-function(x){
 
 train_desc_length<-sapply(train_data$item_description,count_length)
 train_desc_length<-as.numeric(train_desc_length)
-test_desc_length<-sapply(test_data$item_description,count_length)
-test_desc_length<-as.numeric(test_desc_length)
 
 train_data<-data.frame(train_data,desc_length=train_desc_length)
-test_data<-data.frame(test_data,desc_length=test_desc_length)
 
 #finally, we save the results for further use
 #write.csv(train_data,"processed_data/processed_train_data.csv")
-#write.csv(test_data,"processed_data/processed_test_data.csv")
 
 
 

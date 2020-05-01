@@ -19,6 +19,39 @@ library(stringr)
 #we name it as final, stem, combine and logical respectively
 
 #train_data<-read.csv("processed_data/processed_train_data.csv",row.names =1,stringsAsFactors = F)
+
+
+# Preprocessing for other variable ----------------------------------
+# we will use this in final, stem and logical feature.
+
+
+
+train_index<-(1:1481661)
+train_dummy_condition<-dummy_cols(c(train_data$item_condition_id))
+train_dummy_condition<-train_dummy_condition[,-1]
+colnames(train_dummy_condition)<-c("condition_id_1","condition_id_2","condition_id_3","condition_id_4","condition_id_5")
+
+#Then, convert `main_category`
+
+train_dummy_main_cate<-dummy_cols(c(train_data$main_category))
+train_dummy_main_cate<-train_dummy_main_cate[,-1]
+
+#finally, convert `sub_category1`
+
+train_dummy_sub_cate<-dummy_cols(c(train_data$sub_category1))
+train_dummy_sub_cate<-dummy_sub_cate[,-1]
+
+#About `desc_length`, in order it get good model performance, we use log to re scale it.
+
+train_log_length<-log10(c(train_data$desc_length))
+
+#We put all the categorical variables together to build our final train and test data
+
+model_train_data<-data.frame(train_dummy_condition,train_dummy_main_cate,train_dummy_sub_cate,train_data$shipping,train_log_length)
+save(model_train_data,file="processed_data/model_train_data.RData")
+save(train_data$price,file="true_price.RData")
+
+
 stop_words <-c("i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", 
                "your", "yours","the","a","in","at","for","of","they","their","has",
                "have","etc","will","would","on","with","it","its","under","above",
@@ -26,46 +59,8 @@ stop_words <-c("i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you
                "but","out","please","ds","z1","there","these","here","doesnt","dont",
                "isnt","arent","would","wouldnt","x","also","this","items","or","as",
                "ju","an","any","wont","1","2","3","4","5","6","7","8","9","0","about","all","being","i","or")
-
-
-
-
-
-# Preprocessing for other variable ----------------------------------
-# we will use this in final, stem and logical feature.
-
-train_index<-(1:1481661)
-dummy_condition<-dummy_cols(c(train_data$item_condition_id))
-dummy_condition<-dummy_condition[,-1]
-colnames(dummy_condition)<-c("condition_id_1","condition_id_2","condition_id_3","condition_id_4","condition_id_5")
-train_dummy_condition<-dummy_condition[train_index,]
-
-#Then, convert `main_category`
-
-dummy_main_cate<-dummy_cols(c(train_data$main_category))
-dummy_main_cate<-dummy_main_cate[,-1]
-train_dummy_main_cate<-dummy_main_cate[train_index,]
-
-#finally, convert `sub_category1`
-
-dummy_sub_cate<-dummy_cols(c(train_data$sub_category1))
-dummy_sub_cate<-dummy_sub_cate[,-1]
-train_dummy_sub_cate<-dummy_sub_cate[train_index,]
-
-#About `desc_length`, in order it get good model performance, we use log to re scale it.
-
-log_desc_length<-log10(c(train_data$desc_length))
-train_log_length<-log_desc_length[train_index]
-
-#We put all the categorical variables together to build our final train and test data
-
-model_train_data<-data.frame(train_dummy_condition,train_dummy_main_cate,train_dummy_sub_cate,train_data$shipping,train_log_length,price=train_data$price)
-save(model_train_data,file="processed_data/model_train_data.RData")
-save(train_data$price,file="true_price.RData")
-
-
-
 # final Feature-------------
+
 #name 
 train_data_name<-sapply(train_data$name,remove_punctuation)
 prep_fun = tolower
