@@ -1,0 +1,61 @@
+#nameBar{
+  float:left;
+  position:relative;
+  left:10px;
+}
+#brandBar{
+  float:left;
+  position:relative;
+  left:50px;
+}
+#conditionBar{
+    float:left;
+  position:relative;
+  left:10px;
+}
+#shippingBar{
+  float:left;
+  position:relative;
+  left:100px;
+  top:10%;
+}
+#cate1Bar{
+        float:left;
+  position:relative;
+  left:10px;
+}
+#cate2Bar{
+  float:left;
+  position:relative;
+  left:30px;
+}
+#cate3Bar{
+  float:left;
+  position:relative;
+  left:60px;
+}
+#predict{
+  margin-left:30%;
+}
+.workflowPicture{
+  position:relative;
+  height:400px;
+  width:96%;
+  left:2%;
+}
+#preprocessingBar{
+    position:relative;
+  height:400px;
+  width:96%;
+  left:2%;
+}
+#stemFeatureBar{
+      position:relative;
+  height:700px;
+  width:96%;
+  left:2%;
+}
+img {
+    width: 100%;
+    height: 100%;
+}

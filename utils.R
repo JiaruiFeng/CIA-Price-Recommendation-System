@@ -1,3 +1,4 @@
+#util function collection
 
 #square error, one row should represent one sample
 se<-function(y_pre,y_tr){
@@ -27,7 +28,7 @@ rmsle<-function(y_pre,y_tr){
   natr_y_tr<-log(y_tr+1)
   num_sample<-length(y_pre)
   sum_log<-sum((y_pre-natr_y_tr)^2)
-  rmsle_result<-sqrt((1/num_sample)*sum_log)
+  rmsle_result<-sqrt(sum_log/num_sample)
   rmsle_result
 }
 
