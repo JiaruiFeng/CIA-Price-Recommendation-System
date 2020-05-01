@@ -1,14 +1,18 @@
-source("rf.R")
+#this script is used to train random forest for 5-fold cross validation
+#we only use final feature data to train the model
+#need to load corresponding data first
 source("utils.R")
 library(caret)
+library(randomForest)
 
+#split traina and test data
 train_index<-train_test_split(1481661)
 model_train<-final_train_data[train_index,]
 model_test<-final_train_data[-train_index,]
 model_price<-train_price[train_index]
 test_price<-true_price[-train_index]
  
-
+#5-fold cross validation
 folds<-createFolds(train_price[train_index],5)
 train_mse_list<-c()
 train_rmsle_list<-c()
