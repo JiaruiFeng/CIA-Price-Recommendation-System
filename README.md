@@ -50,10 +50,8 @@ For auto encoder, the structure is follow:
 #### 2.3 Model Construction
 
 For model construction, we first use final feature to evaluate different model and parameters. We test Random Forest, XGBoost, DNN and CNN. Evaluation strategy is follow: we divide total training dataset to new training and new test dataset with ratio 0.7/0.3. Then, we construct model and do the 5-folds cross validation on the new training dataset. For evaluation metric, we use Root Mean Squared Logarithmic Error(RMSLE), the formula is follow:
-$$
-\epsilon=\sqrt{\frac{1}{n} \sum_{i=1}^{n}\left(\log \left(p_{i}+1\right)-\log \left(a_{i}+1\right)\right)^{2}}
-$$
-Where $\epsilon$ is the total error, $n$ is the total number ofobservations, $p_i$ is the prediction value for observation $i$, $a_i$ is the true value.
+
+![rmsle](rmsle.png)
 
 Finally we choose the XGBoost and CNN as our final model. Actually DNN and CNN have best performance in cross validation. However, the size of deep learning model is much larger than model like XGBoost. Thus, for model construction, we finally train four XGBoost model use four type of features. Meanwhile, to further increase the accuracy, we train a single CNN model use final feature. The structure of CNN is follow:
 

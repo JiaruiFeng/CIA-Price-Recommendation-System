@@ -11,7 +11,7 @@ library(stringr)
   #`shipping`: 1 if shipping fee is paid by seller and 0 by buyer
   #`item_description`: a sectence describe the item inputed by seller.
   #`price`: the price that the item was sold for
-  #There are total 1482535 data in train data set and data in test data set.
+  #There are total 1482535 data in train data set and 3460725 data in test data set.
 
 
 #pre clean######
