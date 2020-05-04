@@ -51,11 +51,9 @@ initial_app<-function(rv,input){
   rv$stem_brand_encoder<-load_model_hdf5("model/stem_brand_encoder_8.h5")
   rv$stem_cate_encoder<-load_model_hdf5("model/stem_cate_encoder_8.h5")
   rv$stem_desc_encoder<-load_model_hdf5("model/stem_desc_encoder_32.h5")
-  load("model/combine_tfidf.RData")
-  rv$combine_tfidf<-combine_tfidf
-  load("model/combine_vectorizer.RData")
-  rv$combine_vectorizer<-combine_vectorizer
-  rv$combine_encoder<-load_model_hdf5("model/combine_encoder_128.h5")
-  
-  
+  rv$xgb_final<-readRDS("model/xgb_logical.rda")
+  rv$xgb_stem<-readRDS("model/xgb_stem.rda")
+  rv$xgb_logical<-readRDS("model/xgb_logical.rda")
+  rv$xgb_stacking<-readRDS("model/xgb_stacking.rda")
+  rv$cnn<-load_model_hdf5("model/final_cnn.h5")
 }

@@ -59,23 +59,41 @@ predict_process<-function(rv,input){
   }
   stem_desc<-stemming(desc)
   
-  combine_text<-paste(cate1,cate2,stem_cate3,stem_brand,stem_name,stem_desc,collapse = " ")
-  combine_text<-remove_punctuation(combine_text)
-  combine_text<-stemming(combine_text)
-  
+
   length<-count_length(desc)
   log_length<-log10(length+1)
   
   final_feature<-final_feature_processing(rv,name,brand,cate1,cate2,cate3,desc,shipping,dummy_condition,log_length)
   final_feature<-t(as.matrix(final_feature))
   logical_feature<-logical_feature_processing(final_feature)
-
   stem_feature<-stem_feature_processing(rv,stem_name,stem_brand,cate1,cate2,cate3,stem_desc,shipping,dummy_condition,log_length)
   stem_feature<-t(as.matrix(stem_feature))
-  print(dim(stem_feature))
-  combine_feature<-combine_feature_processing(rv,combine_text,shipping,condition)
-  combine_feature<-t(as.matrix(combine_feature))
-  print(dim(combine_feature))
+  
+  colnames(final_feature)<-rv$xgb_final$feature_name
+  final_prediction<-predict(rv$xgb_final,final_feature)
+
+  colnames(logical_feature)<-rv$xgb_logical$feature_name
+  logical_prediction<-predict(rv$xgb_logical,logical_feature)
+
+  colnames(stem_feature)<-rv$xgb_stem$feature_name
+  stem_prediction<-predict(rv$xgb_stem,stem_feature)
+
+  cate_input<-t(as.matrix(final_feature[1:132]))
+  text_input<-t(as.matrix(final_feature[133:188]))
+  cnn_prediction<-as.numeric(predict_on_batch(rv$cnn,list(cate_input,text_input)))
+
+  
+  multi_prediction<-t(as.matrix(c(cnn_prediction,logical_prediction,final_prediction,stem_prediction)))
+  colnames(multi_prediction)<-rv$xgb_stacking$feature_name
+  final_predict<-predict(rv$xgb_stacking,multi_prediction)
+  final_price<-exp(final_predict)-1
+  
+  showModal(modalDialog(
+      tags$h3("The suggest proce for product is:"),
+      tags$h1(id="priceText",as.character(final_price)),
+    title="Suggest Price",
+    easyClose = TRUE
+  ))
 }
 
 remove_punctuation<-function(x){
@@ -138,30 +156,39 @@ final_feature_processing<-function(rv,name,brand,cate1,cate2,cate3,desc,shipping
                   progressbar = FALSE)
   final_dtm_cate<-create_dtm(it_cate,rv$final_cate_vectorizer)
   final_cate_tfidf_data<-as.matrix(transform(final_dtm_cate,rv$final_cate_tfidf))
-  
-  dummy_cate1<-as.vector(dummy_cols(c(rv$cate1,cate1))[12,-1])
-  dummy_cate2<-as.vector(dummy_cols(c(rv$cate2,cate2))[115,-1])
+  print(1)
+  dummy_cate1<-dummy_cols(c(rv$cate1,cate1))[12,-1]
+  dummy_cate1<-as.vector(dummy_cate1)
+  print(2)
+  dummy_cate2<-dummy_cols(c(rv$cate2,cate2))[115,-1]
+  dummy_cate2<-as.vector(dummy_cate2)
   
   final_name_encoder<-rv$final_name_encoder
   final_brand_encoder<-rv$final_brand_encoder
   final_desc_encoder<-rv$final_desc_encoder
   final_cate_encoder<-rv$final_cate_encoder
-  
+
   final_name_encoded<-predict_on_batch(final_name_encoder,final_name_tfidf_data)
   final_brand_encoded<-predict_on_batch(final_brand_encoder,final_brand_tfidf_data)
   final_desc_encoded<-predict_on_batch(final_desc_encoder,final_desc_tfidf_data)
   final_cate_encoded<-predict_on_batch(final_cate_encoder,final_cate_tfidf_data)
   
+  final_name_encoded<-as.matrix(final_name_encoded)
+  final_brand_encoded<-as.matrix(final_brand_encoded)
+  final_desc_encoded<-as.matrix(final_desc_encoded)
+  final_cate_encoded<-as.matrix(final_brand_encoded)
+  print(3)
   final_name_encoded<-as.vector(final_name_encoded[1,])
   final_brand_encoded<-as.vector(final_brand_encoded[1,])
   final_desc_encoded<-as.vector(final_desc_encoded[1,])
   final_cate_encoded<-as.vector(final_cate_encoded[1,])
-
+  print(4)
   final_feature<-unlist(c(dummy_condition,dummy_cate1,dummy_cate2,shipping,log_length,final_brand_encoded,final_cate_encoded,final_name_encoded,final_desc_encoded))
 }
 
 logical_feature_processing<-function(final_feature){
   logical_train_data<-as.numeric(as.logical(final_feature))
+  logical_train_data<-t(as.matrix(logical_train_data))
   logical_train_data
 }
 
@@ -220,6 +247,11 @@ stem_feature_processing<-function(rv,name,brand,cate1,cate2,cate3,desc,shipping,
   stem_desc_encoded<-predict_on_batch(stem_desc_encoder,stem_desc_tfidf_data)
   stem_cate_encoded<-predict_on_batch(stem_cate_encoder,stem_cate_tfidf_data)
   
+  stem_name_encoded<-as.matrix(stem_name_encoded)
+  stem_brand_encoded<-as.matrix(stem_brand_encoded)
+  stem_desc_encoded<-as.matrix(stem_desc_encoded)
+  stem_cate_encoded<-as.matrix(stem_brand_encoded)
+  
   stem_name_encoded<-as.vector(stem_name_encoded[1,])
   stem_brand_encoded<-as.vector(stem_brand_encoded[1,])
   stem_desc_encoded<-as.vector(stem_desc_encoded[1,])
@@ -243,6 +275,7 @@ combine_feature_processing<-function(rv,combine_text,shipping,condition){
   
   combine_encoder<-rv$combine_encoder
   combine_encoded<-predict_on_batch(combine_encoder,combine_tfidf_data)
+  combine_encoded<-as.matrix(combine_encoded)
   combine_encoded<-as.vector(combine_encoded[1,])
   
   combine_feature<-unlist(c(condition,shipping,combine_encoded))

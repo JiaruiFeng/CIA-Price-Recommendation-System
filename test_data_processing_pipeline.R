@@ -267,16 +267,19 @@ it_cate= itoken(test_data_cate_stem,
 
 dtm_test_stem_cate = create_dtm(it_cate, stem_cate_vectorizer)
 test_stem_cate_tfidf = transform(dtm_test_stem_cate, stem_cate_tfidf)
-stem_test_cate_8<-predict_on_batch(stem_cate_encoder,test_stem_cate_tfidf)
-
-stem_test_data<-cbind(model_test_data,stem_test_brand_8,stem_test_cate_8,stem_test_name_8,stem_test_desc_32)
+stem_cate_test_8<-sparseMatrixPredict(test_stem_cate_tfidf,stem_cate_encoder,batch_size=1024,3460725)
+save(stem_cate_test_8,file="processed_data/stem_cate_test_8.RData")
+rm(dtm_test_stem_cate,test_stem_cate_tfidf)
+model_test_data<-as.matrix(model_test_data)
+stem_test_data<-cbind(model_test_data,stem_brand_test_8,stem_cate_test_8,stem_name_test_8,stem_desc_test_32)
 stem_test_data<-as.matrix(stem_test_data)
 save(stem_test_data,file="processed_data/stem_test_data.RData")
-
+rm(stem_brand_test_8,stem_cate_test_8,stem_desc_test_32,stem_name_test_8)
+rm(model_test_data,stem_test_data)
 #combine feature#######
-load("model/combine_tfidf.RData")
-load("model/combine_vectorizer.RData")
-combine_encoder<-load_model_hdf5("model/combine_encoder_128.h5")
+load("processed_data/combine_feature/combine_tfidf.RData")
+load("processed_data/combine_feature/combine_vectorizer.RData")
+combine_encoder<-keras::load_model_hdf5("model/combine_encoder_128.h5")
 
 test_data<-read.csv(file = 'raw_data/test_stg2.tsv', sep = '\t', header = TRUE)
 test_missing_index<-which(as.character(test_data$category_name)=="")
@@ -312,7 +315,8 @@ it_combine= itoken(combine_text,
 dtm_test_combine = create_dtm(it_combine, combine_vectorizer)
 
 test_combine_tfidf = transform(dtm_test_combine, combine_tfidf)
-combine_test_128<-predict_on_batch(combine_encoder,test_combine_tfidf)
+combine_test_128<-sparseMatrixPredict(test_combine_tfidf,combine_encoder,batch_size=1024,3460725)
+save(combine_test_128,file="processed_data/combine_test_128.RData")
 
 #other variables
 other_variables<-test_data[,c("item_condition_id","shipping")]

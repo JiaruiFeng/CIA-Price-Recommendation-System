@@ -17,7 +17,20 @@ function(input, output,session) {
     final_name_vectorizer=NULL,
     final_brand_vectorizer=NULL,
     final_cate_vectorizer=NULL,
-    final_desc_vectorizer=NULL
+    final_desc_vectorizer=NULL,
+    stem_name_tfidf=NULL,
+    stem_brand_tfidf=NULL,
+    stem_cate_tfidf=NULL,
+    stem_desc_tfidf=NULL,
+    stem_name_vectorizer=NULL,
+    stem_brand_vectorizer=NULL,
+    stem_cate_vectorizer=NULL,
+    stem_desc_vectorizer=NULL,
+    xgb_final=NULL,
+    xgb_stem=NULL,
+    xgb_logical=NULL,
+    xgb_stacking=NULL,
+    cnn=NULL
   )
   
   output$brandName<-renderUI(rv$brandNameUI)
@@ -67,5 +80,14 @@ function(input, output,session) {
       alt = "combine feature"
     ))
   },deleteFile = FALSE)
+  
+  output$systemFlow <- renderImage({
+    return(list(
+      src = "picture/system_workflow.png",
+      contentType = "image/png",
+      alt = "combine feature"
+    ))
+  },deleteFile = FALSE)
+  
   
 }

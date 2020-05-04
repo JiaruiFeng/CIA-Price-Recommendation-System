@@ -4,7 +4,7 @@
 #save model trained in total train data
 library(xgboost)
 source("utils.R")
-library(keras)
+library(keras) 
 
 #train on splited train data----------
 train_index<-train_test_split(1481661)
@@ -89,18 +89,15 @@ traindata_logical <- list(data=logical_train_data,label=train_price)
 dtrain_logical <- xgb.DMatrix(data = traindata_logical$data, label = traindata_logical$label)
 
 
-traindata_combine <- list(data=combine_train_data,label=train_price) 
-dtrain_combine <- xgb.DMatrix(data = traindata_combine$data, label = traindata_combine$label)
-
 xgb_model <- xgboost(data = dtrain,
                      eta = 0.5,
                      max_depth = 12, 
                      nround=25,
 )
 
-saveRDS(xgb_model ,file = "xgb_model.rda")
+saveRDS(xgb_model ,file = "model/xgb_final.rda")
 
-model1 <- readRDS("xgb_model.rda")
+model1 <- readRDS("model/xgb_final.rda")
 
 prediction_model<-predict(model1,final_train_data)
 
@@ -111,9 +108,9 @@ xgb_stem <- xgboost(data = dtrain_stem,
                     nround=25,
 )
 
-saveRDS(xgb_stem ,file = "xgb_stem.rda")
+saveRDS(xgb_stem ,file = "model/xgb_stem.rda")
 
-model2 <- readRDS("xgb_stem.rda")
+model2 <- readRDS("model/xgb_stem.rda")
 
 prediction_stem<-predict(model2,stem_train_data)
 
@@ -124,24 +121,12 @@ xgb_logical <- xgboost(data = dtrain_logical,
                        nround=25,
 )
 
-saveRDS(xgb_logical,file = "xgb_logical.rda")
+saveRDS(xgb_logical,file = "model/xgb_logical.rda")
 
-model3 <- readRDS("xgb_logical.rda")
+model3 <- readRDS("model/xgb_logical.rda")
 
 prediction_logical<-predict(model3,logical_train_data)
 
-##
-xgb_combine <- xgboost(data = dtrain_combine,
-                       eta = 0.5,
-                       max_depth = 12, 
-                       nround=25,
-)
-
-saveRDS(xgb_combine ,file = "xgb_combine.rda")
-
-model4 <- readRDS("xgb_combine.rda")
-
-prediction_combine<-predict(model4,combine_train_data)
 
 
 #######
@@ -151,3 +136,18 @@ save(prediction_logical,file="prediction_logical1.RData")
 save(prediction_combine,file="prediction_combine1.RData")
 
 
+#Stacking XGBoost 
+prediction_CNN<-read.delim("processed_data/total_predictions/CNN_prediction.txt",header=F)
+dataset<-cbind(prediction_CNN,prediction_logical,prediction_model,prediction_stem)
+colnames(dataset)<-c("cnn","logical","final","stem")
+dataset<-as.matrix(dataset)
+train_price<-log(true_price+1)
+
+traindata <- list(data=dataset,label=train_price) 
+dtrain <- xgb.DMatrix(data = traindata$data, label = traindata$label) 
+xgb_stacking <- xgboost(data = dtrain, 
+                     eta = 0.2,
+                     max_depth = 4, 
+                     nround=40
+)
+saveRDS(xgb_stacking,file = "xgb_stacking.rda")

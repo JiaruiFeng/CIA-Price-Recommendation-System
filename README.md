@@ -3,7 +3,7 @@ This project is for ESE529 course project, Washington University in St.Louis.  W
 
 ### 1. introduction
 
-You can view the final system through. Based on the dataset, we use machine learning and deep learning technique to construct prediction workflow to transform and predict price using information user provide with us. In the system, you can input the information about your product, like the name, brand, category, description, etc. Then, system will give you a reasonable price based on information
+You can view the final system through [CIA-Price-Prediction](https://cia-price-suggestion.shinyapps.io/application/). Based on the dataset, we use machine learning and deep learning technique to construct prediction workflow to transform and predict price using information user provide with us. In the system, you can input the information about your product, like the name, brand, category, description, etc. Then, system will give you a reasonable price based on information
 
 ### 2. Model Construction Workflow
 
@@ -57,13 +57,13 @@ Finally we choose the XGBoost and CNN as our final model. Actually DNN and CNN h
 
 ![CNN_structure](application/picture/CNN_structure.png)
 
-Finally, we combine result of five model prediction with another XGBoost to get our final prediction of price.  For the final XGBoost, we use all the data in new training dataset to train five model, then we use the preidiction for new test dataset of five model as new input data to train and evaluate XGBoost use 5-folds cross-validation.
+Next, we use the new test data to get test prediction of each of five models. we use this data to build a stacking model to further improve performance. First, we use ridge regression and cross validation to get a sense about the importance for each model. We found that CNN has the most importance but XGBoost with combine feature has really low importance compare to other models. Finally, we decide to remove this model. Then, we split data with 0.8/0.2 ratio and use 0.8 part of data to build XGBoost model and use 0.2 part of data to test.
 
 ### 3. System Construction
 
 After we evaluate all the model, we finally train all the model using all the training dataset with the parameters we get in validation. These models then be embedded to the system use to predict price for new product. The workflow of system is follow:
 
-![system workflow](application/picture/system workflow.png)
+![system workflow](application/picture/system_workflow.png)
 
  
 

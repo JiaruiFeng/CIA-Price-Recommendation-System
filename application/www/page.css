@@ -17,7 +17,7 @@
   float:left;
   position:relative;
   left:100px;
-  top:10%;
+  top:30%;
 }
 #cate1Bar{
         float:left;
@@ -53,6 +53,18 @@
       position:relative;
   height:700px;
   width:96%;
+  left:2%;
+}
+#SystemWorkflowPicture{
+      position:relative;
+  height:400px;
+  width:80%;
+  left:2%;
+}
+#finalFeaturePicture{
+        position:relative;
+  height:400px;
+  width:80%;
   left:2%;
 }
 img {

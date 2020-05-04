@@ -1,0 +1,12 @@
+name: application
+title: application
+username:
+account: cia-price-suggestion
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2234729
+bundleId: 3098704
+url: https://cia-price-suggestion.shinyapps.io/application/
+when: 1588548561.59621
+asMultiple: FALSE
+asStatic: FALSE
