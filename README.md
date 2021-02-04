@@ -45,6 +45,8 @@ Actually, when bulid the model, we found that the final feature would give us be
 
 For auto encoder, the structure is follow:
 
+
+
 ![auto_ encoder_structure](application/picture/auto_ encoder_structure.png)
 
 #### 2.3 Model Construction
